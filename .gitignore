@@ -2,7 +2,6 @@
 build/
 coverage.out
 coverage.html
-server
 
 # Временные файлы
 *.tmp
