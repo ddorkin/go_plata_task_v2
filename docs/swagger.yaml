@@ -1,0 +1,173 @@
+basePath: /api/v1
+definitions:
+  models.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  models.QuoteResponse:
+    properties:
+      from:
+        type: string
+      id:
+        type: string
+      rate:
+        type: number
+      to:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.UpdateQuoteRequest:
+    properties:
+      from:
+        description: Базовая валюта (например, "EUR")
+        type: string
+      to:
+        description: Котируемая валюта (например, "MXN")
+        type: string
+    required:
+    - from
+    - to
+    type: object
+  models.UpdateQuoteResponse:
+    properties:
+      from:
+        type: string
+      id:
+        type: string
+      status:
+        type: string
+      to:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Сервис котировок валютных курсов с асинхронным обновлением
+  title: Currency Quote Service API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      description: Проверка состояния сервиса
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health check
+      tags:
+      - system
+  /quotes/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает котировку валютной пары по ID запроса на обновление
+      parameters:
+      - description: ID запроса на обновление котировки
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.QuoteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Получить котировку по ID запроса
+      tags:
+      - quotes
+  /quotes/latest:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает последнее значение котировки для указанной валютной
+        пары
+      parameters:
+      - description: Базовая валюта (например, EUR)
+        in: query
+        name: from
+        required: true
+        type: string
+      - description: Котируемая валюта (например, MXN)
+        in: query
+        name: to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.QuoteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Получить последнюю котировку валютной пары
+      tags:
+      - quotes
+  /quotes/update:
+    post:
+      consumes:
+      - application/json
+      description: Создает запрос на обновление котировки валютной пары (например,
+        EUR/MXN). Обновление происходит в фоновом режиме.
+      parameters:
+      - description: Запрос на обновление котировки
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateQuoteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UpdateQuoteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Обновить котировку валютной пары
+      tags:
+      - quotes
+schemes:
+- http
+- https
+swagger: "2.0"

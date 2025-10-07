@@ -1,0 +1,32 @@
+# Генерируемые файлы
+build/
+coverage.out
+coverage.html
+server
+
+# Временные файлы
+*.tmp
+*.log
+*.pid
+.DS_Store
+Thumbs.db
+
+# IDE файлы
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Go специфичные
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Конфигурационные файлы с секретами
+.env
+.env.local
+.env.production
+configs/local.yaml
+configs/secrets.yaml
